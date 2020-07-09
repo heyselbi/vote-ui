@@ -1,20 +1,20 @@
-# Using official python runtime base image
-FROM python:3.7-alpine
+# Use the official image as a parent image.
+FROM node:current-slim
 
-# Set the application directory
-WORKDIR /app
+# Set the working directory.
+WORKDIR /usr/src/app
 
-# Install our requirements.txt
-ADD requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
+# Copy the file from your host to your current location.
+COPY package.json .
 
-# Copy our code from the current folder to /app inside the container
-ADD . /app
-RUN chmod 0755 -R /app
+# Run the command inside your image filesystem.
+RUN npm install
 
-# Make port 80 available for links and/or publish
+# Inform Docker that the container is listening on the specified port at runtime.
 EXPOSE 8080
 
-# Define our command to be run when launching the container
-#CMD ["gunicorn", "app:app", "-b", "0.0.0.0:8080", "--log-file", "-", "--access-logfile", "-", "--workers", "4", "--keep-alive", "0"]
-CMD ["python", "./app.py"]
+# Run the specified command within the container.
+CMD [ "npm", "start" ]
+
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . .
